@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  sandbox-deployment
+  namespace: default
+  labels:
+    app:  sandbox-deployment
+spec:
+  selector:
+    matchLabels:
+      app: sandbox
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  sandbox
+    spec:
+      # initContainers:
+        # Init containers are exactly like regular containers, except:
+          # - Init containers always run to completion.
+          # - Each init container must complete successfully before the next one starts.
+      containers:
+      - name:  sandbox-deployment
+        imagePullPolicy: IfNotPresent
+        image:  sandbox:latest
+        resources:
+          requests:
+            cpu: 250m
+            memory: 200Mi
+          limits:
+            cpu: 500m
+            memory: 400Mi
+        livenessProbe:
+          httpGet:
+            path: /api/sandbox/health
+            port: 3000
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/sandbox/health
+            port: 3000
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+          successThreshold: 1
+          failureThreshold: 3
+          periodSeconds: 10
+        ports:
+        - containerPort:  3000
+          name:  sandbox-port
