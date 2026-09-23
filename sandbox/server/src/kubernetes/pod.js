@@ -1,4 +1,4 @@
-import { k8sCoreV1Api } from "./config";
+import { k8sCoreV1Api } from "./config.js";
 
 export const createPod = async (sandboxId) => { 
 
