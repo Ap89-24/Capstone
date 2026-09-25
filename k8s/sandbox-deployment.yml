@@ -15,14 +15,11 @@ spec:
       labels:
         app:  sandbox
     spec:
-      # initContainers:
-        # Init containers are exactly like regular containers, except:
-          # - Init containers always run to completion.
-          # - Each init container must complete successfully before the next one starts.
+      serviceAccountName: resource-manager
       containers:
       - name:  sandbox-deployment
-        imagePullPolicy: IfNotPresent
         image:  sandbox:latest
+        imagePullPolicy: IfNotPresent
         resources:
           requests:
             cpu: 250m
