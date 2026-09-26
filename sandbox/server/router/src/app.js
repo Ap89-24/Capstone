@@ -16,8 +16,8 @@ app.get("/api/status/readyz", (req, res) => {
 
 const proxies = [];
 
-const getProxy = (sandboxId) => { 
-
+const getProxy = (sandboxId) => {
+    
     const target = `http://sandbox-service-${sandboxId}`;
     if (!proxies[sandboxId]) {
         proxies[sandboxId] = createProxyMiddleware({
