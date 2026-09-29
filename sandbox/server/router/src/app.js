@@ -17,13 +17,23 @@ app.get("/api/status/readyz", (req, res) => {
 const proxies = [];
 
 const getProxy = (sandboxId) => {
-    
+
     const target = `http://sandbox-service-${sandboxId}`;
     if (!proxies[sandboxId]) {
         proxies[sandboxId] = createProxyMiddleware({
         target,
         changeOrigin: true,
-        ws: true
+        ws: true,
+        
+        onError: (err, req, res) => {
+                console.error("Proxy error:", err);
+
+                if (!res.headersSent) {
+                    res.status(502).json({
+                        error: "Sandbox unavailable"
+                    });
+                }
+            }    
     });
     };
 

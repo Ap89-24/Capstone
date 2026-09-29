@@ -13,18 +13,18 @@ export const createPod = async (sandboxId) => {
         spec: {
             containers: [
                 {
-                    image: "template",
+                    image: "template:latest",
                     imagePullPolicy: "IfNotPresent",
                     name: "sandbox-container",
                     ports: [{ containerPort: 5173, name: 'http' }],
                     resources: {
                         limits: {
                             cpu: "500m",
-                            memory: "1Gi"
+                            memory: "512Mi"
                         },
                         requests: {
-                            cpu: "2250m",
-                            memory: "500Mi"
+                            cpu: "250m",
+                            memory: "128Mi"
                         },
                     },
                 }
