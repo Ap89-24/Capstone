@@ -11,6 +11,12 @@ export const createPod = async (sandboxId) => {
             }
         },
         spec: {
+            volumes: [
+                {
+                    name: "workspace-volume",
+                    emptyDir: {}
+                }
+            ],
             containers: [
                 {
                     image: "template:v2",
@@ -27,6 +33,29 @@ export const createPod = async (sandboxId) => {
                             memory: "128Mi"
                         },
                     },
+                },
+                
+                {
+                    image: "agent:v2",
+                    imagePullPolicy: "IfNotPresent",
+                    name: "agent-container",
+                    ports: [{ containerPort: 3000, name: 'http' }],
+                    resources: {
+                        limits: {
+                            cpu: "500m",
+                            memory: "1Gi"
+                        },
+                        requests: {
+                            cpu: "250m",
+                            memory: "500Mi"
+                        },
+                    },
+                    volumeMounts: [
+                        {
+                            name: "workspace-volume",
+                            mountPath: "/workspace"
+                        }
+                    ],
                 }
             ]
         }
