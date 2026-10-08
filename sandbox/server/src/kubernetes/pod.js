@@ -33,6 +33,12 @@ export const createPod = async (sandboxId) => {
                             memory: "128Mi"
                         },
                     },
+                    volumeMounts: [
+                        {
+                            name: "workspace-volume",
+                            mountPath: "/workspace"
+                        }
+                    ],
                 },
                 
                 {
