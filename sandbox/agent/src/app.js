@@ -42,7 +42,7 @@ app.get("/read-files", async (req, res) => {
 
     const fileList = files.split(",")
 
-    await Promise.all(fileList.map(async (file) => {
+    const results = await Promise.all(fileList.map(async (file) => {
         const filePath = `${WORKING_DIR}/${file}`;
         try {
             const content = await fs.promises.readFile(filePath, "utf-8");
@@ -55,5 +55,10 @@ app.get("/read-files", async (req, res) => {
             }
         }
     }));
+
+    return res.status(200).json({
+        message: "File contents",
+        files: results
+    });
 });
 export default app;
