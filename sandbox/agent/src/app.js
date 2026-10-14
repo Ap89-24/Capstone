@@ -27,4 +27,21 @@ app.get("/list-files", async (req, res) => {
     });
 });
 
+/**
+  @route -> GET/read-files
+*/
+app.get("/read-files", async (req, res) => {
+    const files = req.query.files;
+
+    if (!files) {
+        return res.status(400).json({
+            message: "No files specified in query parameter",
+            status: "error"
+        });
+    }
+
+    const fileList = files.split(",")
+
+    
+});
 export default app;
