@@ -42,6 +42,18 @@ app.get("/read-files", async (req, res) => {
 
     const fileList = files.split(",")
 
-    
+    await Promise.all(fileList.map(async (file) => {
+        const filePath = `${WORKING_DIR}/${file}`;
+        try {
+            const content = await fs.promises.readFile(filePath, "utf-8");
+            return {
+                [filePath]: content,
+            }
+        } catch (error) {
+            return {
+                [filePath]: `Error reading files: ${error.message}`,
+            }
+        }
+    }));
 });
 export default app;
