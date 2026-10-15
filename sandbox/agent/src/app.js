@@ -69,7 +69,7 @@ app.get("/read-files", async (req, res) => {
 app.patch("/update-files", async (req, res) => {
     const updates = req.body.updates;
 
-    if (!updates || Array.isArray(updates)) {
+    if (!updates || !Array.isArray(updates)) {
         return res.status(400).json({
             message: "Invalid request body. Expected a json object with an update property containing an array of file updates",
             status: "error"
@@ -93,6 +93,40 @@ app.patch("/update-files", async (req, res) => {
 
     return res.status(200).json({
         message: "File update results",
+        results
+    });
+});
+
+/**
+  @route -> POST/create-files
+*/
+app.post("/create-files", async (req, res) => {
+    const files = req.body.files;
+
+    if (!files || !Array.isArray(files)) {
+        return res.status(400).json({
+            message: "Invalid request body. Expected a json object with an update property containing an array of file updates",
+            status: "error"
+        });
+    };
+
+    const results = await Promise.all(files.map(async (fileObj) => {
+        const { file, content } = fileObj;
+        const filePath = path.join(WORKING_DIR, file);
+        try {
+            await fs.promises.writeFile(filePath, content, "utf-8");
+            return {
+                [filePath]: "File created successfully"
+            }
+        } catch (error) {
+            return {
+                [filePath]: `Error creating files ${error.message}`,
+            }
+        };
+    }));
+
+    return res.status(200).json({
+        message: "File create results",
         results
     });
 });
