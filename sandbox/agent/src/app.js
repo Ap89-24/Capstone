@@ -18,14 +18,46 @@ app.get("/", (req, res) => {
     });
 });
 
-
+/**
+  @route -> GET/list-files
+*/
 app.get("/list-files", async (req, res) => {
-    const elements = await fs.promises.readdir(WORKING_DIR);
+    
+    const listFiles = async (dir, baseDir) => {
+        const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+        const files = [];
+        for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name);
+            const relativePath = path.relative(baseDir, fullPath);
 
-    res.status(200).json({
-        message: "Elements in working directory",
-        elements
-    });
+            //Exclude certain directories.....
+            if (entry.isDirectory() && ['node_modules', 'dist', 'build', 'git'].includes(entry.name)) {
+                continue;
+            };
+
+            if (entry.isDirectory()) {
+                files.push(...await listFiles(fullPath, baseDir));
+            } else {
+                files.push(relativePath);
+            };
+        }
+
+        return files;
+    }
+
+    try {
+        const files = await listFiles(WORKING_DIR, WORKING_DIR);
+        res.status(200).json({
+            message: 'Files listed successfully',
+            files,
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: `Error listing files: ${err.message}`,
+            status: 'error',
+        });
+    }
+    
 });
 
 /**
