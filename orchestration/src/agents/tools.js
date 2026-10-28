@@ -44,7 +44,7 @@ export const readFiles = tool(
  */
 export const writeFiles = tool(
     async ({ files }) => {
-        const response = await axios.post("http://01a13f4a-a011-7329-b130-92db2c2fbb60.agent.localhost/create-files", {
+        const response = await axios.patch("http://01a13f4a-a011-7329-b130-92db2c2fbb60.agent.localhost/create-files", {
             updates: files
         })
 
