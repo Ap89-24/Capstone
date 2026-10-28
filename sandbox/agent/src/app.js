@@ -10,6 +10,8 @@ const app = express();
 
 app.use(morgan("dev"));
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 /**
   @description -> This is a test api....
  */
@@ -82,15 +84,15 @@ app.get("/read-files", async (req, res) => {
     const fileList = files.split(",")
 
     const results = await Promise.all(fileList.map(async (file) => {
-        const filePath = `${WORKING_DIR}/${file}`;
+        const filePath = path.join(WORKING_DIR, file);
         try {
             const content = await fs.promises.readFile(filePath, "utf-8");
             return {
-                [filePath]: content,
+                [filePath.replace(WORKING_DIR, "")]: content,
             }
         } catch (error) {
             return {
-                [filePath]: `Error reading files: ${error.message}`,
+                [filePath.replace(WORKING_DIR, "")]: `Error reading files: ${error.message}`,
             }
         }
     }));
@@ -120,6 +122,7 @@ app.patch("/update-files", async (req, res) => {
         const { file, content } = update;
         const filePath = path.join(WORKING_DIR, file);
         try {
+            await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
             await fs.promises.writeFile(filePath, content, "utf-8");
             return {
                 [filePath]: "File update successfully"
@@ -156,6 +159,7 @@ app.post("/create-files", async (req, res) => {
         const { file, content } = fileObj;
         const filePath = path.join(WORKING_DIR, file);
         try {
+            await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
             await fs.promises.writeFile(filePath, content, "utf-8");
             return {
                 [filePath]: "File created successfully"
