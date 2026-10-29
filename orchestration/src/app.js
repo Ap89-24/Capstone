@@ -15,7 +15,8 @@ app.use(express.json());
 /**
  * @description -> Health checks api....
  */
-app.get("/api/ai/healthz", async (req, res) => {
+
+app.get("/api/status/healthz", async (req, res) => {
     res.status(200).json({ status: "ok" });
 });
 
