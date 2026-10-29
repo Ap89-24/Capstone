@@ -35,8 +35,6 @@ spec:
           httpGet:
             path: /api/status/healthz
             port: 3000
-          tcpSocket:
-            port: 3000
           initialDelaySeconds: 5
           timeoutSeconds: 5
           successThreshold: 1

@@ -18,7 +18,7 @@ spec:
       serviceAccountName: resource-manager
       containers:
       - name:  sandbox-deployment
-        image:  sandbox:v3
+        image:  sandbox
         imagePullPolicy: IfNotPresent
         resources:
           requests:
