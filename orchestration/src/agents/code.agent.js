@@ -15,11 +15,4 @@ const agent = createAgent({
     tools: [listFiles, readFiles, writeFiles]
 })
 
-await agent.invoke({
-    messages: [
-        {
-            role: "user",
-            content: "update the theme of the project to light"
-        }
-    ]
-})
+export default agent;
