@@ -22,7 +22,7 @@ spec:
           # - Each init container must complete successfully before the next one starts.
       containers:
       - name: ai-server
-        image: ai-orchestration
+        image: ai-orchestration:latest
         imagePullPolicy: IfNotPresent
         resources:
           requests:
@@ -35,7 +35,7 @@ spec:
           - name: MISTRAL_API_KEY
             valueFrom:
               secretKeyRef:
-                name: ai-secrets
+                name: ai-secret
                 key: MISTRAL_API_KEY
         livenessProbe:
           httpGet:
