@@ -7,8 +7,8 @@ import * as z from "zod";
  * @description -> Lists all files available in the project directory. The AI agent can use this tool to discover the project's file structure before deciding which files it needs to read or modify.
  */
 export const listFiles = tool(
-    async ({ }) => {
-        const response = await axios.get("http://01a13f4a-a011-7329-b130-92db2c2fbb60.agent.localhost/list-files");
+    async ({ }, config) => {
+        const response = await axios.get(`http://sandbox-service-${config.context.projectId}:3000/list-files`);
 
         return JSON.stringify(response.data.files);
     },
@@ -24,8 +24,8 @@ export const listFiles = tool(
  * @description -> Reads the contents of one or more specified files. It allows the AI agent to inspect source code, configuration files, and other project files to understand the existing implementation.
  */
 export const readFiles = tool(
-    async ({ files: [] }) => {
-        const response = await axios.get("http://01a13f4a-a011-7329-b130-92db2c2fbb60.agent.localhost/read-files?files=" + files.join(","));
+    async ({ files = [] }, config) => {
+        const response = await axios.get(`http://sandbox-service-${config.context.projectId}:3000/read-files?files=` + files.join(","));
 
         return JSON.stringify(response.data);
     },
@@ -43,8 +43,8 @@ export const readFiles = tool(
  * @description -> Creates new files or replaces the contents of existing files. The agent supplies the file paths and the new content, and the server performs the requested file operations.
  */
 export const writeFiles = tool(
-    async ({ files }) => {
-        const response = await axios.patch("http://01a13f4a-a011-7329-b130-92db2c2fbb60.agent.localhost/create-files", {
+    async ({ files }, config) => {
+        const response = await axios.patch(`http://sandbox-service-${config.context.projectId}:3000/create-files`, {
             updates: files
         })
 
@@ -61,3 +61,5 @@ export const writeFiles = tool(
         })
     }
 );
+
+

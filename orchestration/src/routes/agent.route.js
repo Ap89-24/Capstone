@@ -5,8 +5,11 @@ const agentRouter = Router();
 
 agentRouter.post("/invoke", async (req, res) => {
     try {
-        const { messages } = req.body;
-        const response = await agent.invoke({ input: messages });
+        const { message, projectId } = req.body;
+        const response = await agent.invoke(
+            { messages: [{ role: "user", content: message }] },
+            { context: projectId }
+        );
         res.status(200).json({ response });
     } catch (error) {
         console.error("Error invoking agent:", error);
