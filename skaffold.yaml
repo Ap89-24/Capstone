@@ -2,6 +2,8 @@ apiVersion: skaffold/v4beta13
 kind: Config
 
 build:
+  tagPolicy:
+    sha256: {}
   local:
     push: false
     useDockerCLI: true
