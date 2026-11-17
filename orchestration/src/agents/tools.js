@@ -8,8 +8,14 @@ import * as z from "zod";
  */
 export const listFiles = tool(
     async ({ }, config) => {
+
+        const writer = config.writer;
+
+        writer("Listing files in the project directory...\n");
+
         const response = await axios.get(`http://sandbox-service-${config.context.projectId}:3000/list-files`);
 
+        writer(`Files listed: ${JSON.stringify(response.data.files)}\n`);
         return JSON.stringify(response.data.files);
     },
     {
@@ -25,8 +31,13 @@ export const listFiles = tool(
  */
 export const readFiles = tool(
     async ({ files = [] }, config) => {
+
+        const writer = config.writer;
+        writer(`Reading files: ${files.join(", ")}\n`);
+
         const response = await axios.get(`http://sandbox-service-${config.context.projectId}:3000/read-files?files=` + files.join(","));
 
+        writer(`Files read: ${JSON.stringify(response.data)}\n`);
         return JSON.stringify(response.data);
     },
     {
@@ -44,10 +55,15 @@ export const readFiles = tool(
  */
 export const writeFiles = tool(
     async ({ files }, config) => {
+
+        const writer = config.writer;
+        writer(`Writing files: ${JSON.stringify(files)}\n`);
+
         const response = await axios.patch(`http://sandbox-service-${config.context.projectId}:3000/create-files`, {
             updates: files
-        })
+        });
 
+        writer(`Files written: ${JSON.stringify(response.data.results)}\n`);
         return JSON.stringify(response.data.results);
     },
     {
