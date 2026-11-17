@@ -2,16 +2,27 @@ import express from "express";
 import morgan from "morgan";
 import fs from "fs";
 import path from "path";
+import { Server } from "socket.io";
+import http from "http";
 
 
 const WORKING_DIR = "/workspace";
 
 const app = express();
+const httpServer = http.createServer(app);
 
 app.use(morgan("dev"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const io = new Server(httpServer, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PATCH", "DELETE"]
+    }
+});
+
 /**
   @description -> This is a test api....
  */
@@ -21,6 +32,17 @@ app.get("/", (req, res) => {
         status: "success"
     });
 });
+
+/**
+ * @description -> Initialize socket.io connection and handle client connections and disconnections 
+ */
+io.on("connection", (socket) => {
+    console.log("Client connected: ", socket.id);
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected: ", socket.id);
+    });
+})
 
 /**
   @route -> GET/list-files
@@ -176,4 +198,4 @@ app.post("/create-files", async (req, res) => {
         results
     });
 });
-export default app;
+export default httpServer;
