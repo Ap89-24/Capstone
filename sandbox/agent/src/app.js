@@ -4,6 +4,8 @@ import fs from "fs";
 import path from "path";
 import { Server } from "socket.io";
 import http from "http";
+import pty from "node-pty";
+import os from "os";
 
 
 const WORKING_DIR = "/workspace";
@@ -34,10 +36,35 @@ app.get("/", (req, res) => {
 });
 
 /**
+ * @description -> Initializes a cross-platform interactive terminal using PTY, automatically selecting PowerShell or Bash based on the OS. Configures the terminal environment, streams real-time output through Socket.IO, and monitors process termination.
+ *  */  
+const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+
+const ptyProcess = pty.spawn(shell, [], {
+  name: 'xterm-color',
+  cols: 80,
+  rows: 30,
+  cwd: "/workspace",
+  env: process.env
+});
+
+ptyProcess.onData((data) => {
+    io.emit('terminal-output', data);
+});
+
+ptyProcess.onExit(({ exitCode, signal }) => {
+    console.log(`PTY process exited with code ${exitCode} and signal ${signal}`);
+});
+
+/**
  * @description -> Initialize socket.io connection and handle client connections and disconnections 
  */
 io.on("connection", (socket) => {
     console.log("Client connected: ", socket.id);
+
+    socket.on("terminal-input", (data) => {
+        ptyProcess.write(data);
+    })
 
     socket.on("disconnect", () => {
         console.log("Client disconnected: ", socket.id);
@@ -198,4 +225,6 @@ app.post("/create-files", async (req, res) => {
         results
     });
 });
+
+
 export default httpServer;
