@@ -8,6 +8,7 @@
         "MYAPP",
         "myjob",
         "readyz",
+        "tini",
         "zoneinfo"
     ]
 }
