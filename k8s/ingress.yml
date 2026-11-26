@@ -45,7 +45,7 @@ spec:
            service:
              name: ai-service
              port:
-               number: 80             
+               number: 80
 
   - host: "*.preview.localhost"
     http:
@@ -67,4 +67,4 @@ spec:
           service:
             name: router-service
             port:
-              number: 80            
+              number: 80
