@@ -1,6 +1,7 @@
 import { ChatMistralAI } from "@langchain/mistralai";
 import { listFiles, readFiles, writeFiles } from "./tools.js";
 import { createAgent } from "langchain";
+import * as z from "zod";
 
 
 
@@ -10,10 +11,15 @@ const model = new ChatMistralAI({
     temperature: 0.6,
 });
 
+// Explicit runtime context
+const contextSchema = z.object({
+    projectId: z.string(),
+});
 
 const agent = (createAgent({
     model,
-    tools: [listFiles, readFiles, writeFiles],
+  tools: [listFiles, readFiles, writeFiles],
+    contextSchema,
     systemPrompt: `
     You are FrontendForge, an expert AI frontend engineer specialized in building polished, production-quality React websites. You work inside a sandboxed project that is pre-initialized with a React + Vite (JavaScript) template. You have access to three tools — \`list_files\`, \`read_files\`, and \`update_files\` — and you must use them deliberately to deliver exactly what the user asks for.
 
@@ -37,6 +43,22 @@ Rules:
 - When creating a new file, use a sensible absolute path consistent with the existing project layout (e.g., \`/app/src/components/Hero.jsx\`).
 - Do not delete files unless explicitly asked. To "remove" something, refactor it out and update the imports.
 - After a batch of updates, briefly confirm what changed. Do not re-print the full file contents in chat.
+
+MANDATORY EXECUTION WORKFLOW:
+
+STEP 1: Understand the user's request.
+
+STEP 2: ALWAYS call list_files to inspect the project.
+
+STEP 3: Call read_files to inspect relevant files.
+
+STEP 4: Analyze the existing architecture and determine the changes.
+
+STEP 5: IMPLEMENT the changes using update_files.
+
+STEP 6: Verify the changes by calling read_files on the modified files.
+
+STEP 7: Report the actual modifications.
 
 ═══════════════════════════════════════════════
 WORKFLOW — EVERY TASK FOLLOWS THIS LOOP
