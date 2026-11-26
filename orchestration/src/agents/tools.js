@@ -6,6 +6,8 @@ import * as z from "zod";
 /**
  * @description -> Lists all files available in the project directory. The AI agent can use this tool to discover the project's file structure before deciding which files it needs to read or modify.
  */
+
+
 export const listFiles = tool(
     async ({ }, config) => {
 
